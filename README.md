@@ -22,6 +22,13 @@ steps:
     message_pic: true
     sha_link: true
     drone_port: 30000
+    db_log: true
+    db_type: mysql
+    db_name: cicd
+    db_host: "localhost"
+    db_port: 3306
+    db_username: dyb
+    db_password: rootdyb
   when:
     status: [failure, success]
 ```

@@ -161,6 +161,45 @@ func main() {
 			Usage:  "link sha source page or not",
 			EnvVar: "PLUGIN_SHA_LINK,PLUGIN_MESSAGE_SHA_LINK",
 		},
+		cli.BoolFlag{
+			Name:   "config.db.log",
+			Usage:  "write db log",
+			EnvVar: "PLUGIN_DB_LOG",
+		},
+		cli.StringFlag{
+			Name:   "config.db.type",
+			Usage:  " db type",
+			EnvVar: "PLUGIN_DB_TYPE",
+		},
+		cli.StringFlag{
+			Name:   "config.db.name",
+			Usage:  " db name",
+			EnvVar: "PLUGIN_DB_NAME",
+		},
+		cli.StringFlag{
+			Name:   "config.db.host",
+			Usage:  " db host",
+			EnvVar: "PLUGIN_DB_HOST",
+		}, cli.Int64Flag{
+			Name:   "config.db.port",
+			Usage:  " db port",
+			EnvVar: "PLUGIN_DB_PORT",
+		},
+		cli.StringFlag{
+			Name:   "config.db.username",
+			Usage:  " db name",
+			EnvVar: "PLUGIN_DB_USERNAME",
+		},
+		cli.StringFlag{
+			Name:   "config.db.password",
+			Usage:  " db name",
+			EnvVar: "PLUGIN_DB_PASSWORD",
+		},
+		cli.StringFlag{
+			Name:   "config.db.table",
+			Usage:  " db table",
+			EnvVar: "PLUGIN_DB_TABLE",
+		},
 		cli.StringFlag{
 			Name:   "module.name",
 			Usage:  "git update package name",
@@ -250,6 +289,16 @@ func run(c *cli.Context) {
 				SuccessColor: c.String("config.success.color"),
 				FailureColor: c.String("config.failure.color"),
 				WithColor:    c.Bool("config.message.color"),
+			},
+			Db: ExtraDb{
+				DbLog:      c.Bool("config.db.log"),
+				DbType:     c.String("config.db.type"),
+				DbName:     c.String("config.db.name"),
+				DbHost:     c.String("config.db.host"),
+				DbPort:     c.Int64("config.db.port"),
+				DbUsername: c.String("config.db.username"),
+				DbPassword: c.String("config.db.password"),
+				DbTable:    c.String("config.db.table"),
 			},
 			LinkSha: c.Bool("config.message.sha.link"),
 		},

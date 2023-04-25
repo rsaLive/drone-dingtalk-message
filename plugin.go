@@ -1,6 +1,8 @@
 package main
 
 import (
+	"drone-message/model"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -70,6 +72,7 @@ type (
 	Extra struct {
 		Color   ExtraColor
 		Pic     ExtraPic
+		Db      ExtraDb
 		LinkSha bool
 	}
 
@@ -85,6 +88,17 @@ type (
 		WithColor    bool
 		SuccessColor string
 		FailureColor string
+	}
+
+	ExtraDb struct {
+		DbLog      bool
+		DbType     string
+		DbName     string
+		DbHost     string
+		DbPort     int64
+		DbUsername string
+		DbPassword string
+		DbTable    string
 	}
 
 	// Plugin `plugin all config`
@@ -104,12 +118,12 @@ type (
 
 // Exec `execute webhook`
 func (p *Plugin) Exec() error {
+	fmt.Printf("%+v", p.Config)
 	if p.Config.Debug {
 		for _, e := range os.Environ() {
 			log.Println(e)
 		}
 	}
-
 	var err error
 	if p.Config.AccessToken == "" {
 		msg := "missing dingtalk access token"
@@ -120,11 +134,11 @@ func (p *Plugin) Exec() error {
 		msg := "missing dingtalk secret"
 		return errors.New(msg)
 	}
+	DbLog(p)
 
 	if 6 > len(p.Drone.Commit.Sha) {
 		return errors.New("commit sha cannot short than 6")
 	}
-
 	newWebhook := NewWebHook(p.Config.AccessToken, p.Config.Secret)
 	mobiles := strings.Split(p.Config.Mobiles, ",")
 	if p.Drone.Repo.ModName != "" {
@@ -163,6 +177,19 @@ func (p *Plugin) Exec() error {
 		}
 	}
 
+	aa, _ := json.Marshal(p.Drone.Build)
+	if p.Extra.Db.DbLog {
+		_ = WriteLog(&model.PublishLog{
+			CommitId:   p.Drone.Commit.Sha,
+			CommitLink: p.Drone.Commit.Link,
+			BuildLink:  p.Drone.Build.Link,
+			Author:     p.Drone.Commit.Authors.Name,
+			Branch:     p.Drone.Commit.Branch,
+			Message:    p.Drone.Commit.Message,
+			Event:      p.Drone.Build.Event,
+			Remark:     string(aa),
+		})
+	}
 	return err
 }
 
@@ -195,7 +222,6 @@ func (p *Plugin) actionCardTpl() string {
 		commitMsg = fmt.Sprintf("<font color=%s>%s</font>", p.getColor(), commitMsg)
 	}
 	tpl += commitMsg + "\n\n"
-
 	// author info
 	authorInfo := fmt.Sprintf("提交者：`%s(%s)`", p.Drone.Commit.Authors.Name, p.Drone.Commit.Authors.Email)
 	tpl += authorInfo + "\n\n"
@@ -298,6 +324,10 @@ func (p *Plugin) markdownTpl() string {
 
 	//imagepath := string(b)
 
+	if p.Extra.Db.DbLog {
+		dbMsg := fmt.Sprintf("数据库记录信息:%v", model.DbMsg)
+		tpl += dbMsg + "\n\n"
+	}
 	// deploy link
 	if len(repos) > 0 {
 		//repos := strings.Split(string(b), ",")
@@ -315,6 +345,7 @@ func (p *Plugin) markdownTpl() string {
 
 	tpl += "---\n\n\n\n" + commitSha + " | " + buildDetail + "\n\n"
 
+	//fmt.Println(tpl)
 	return tpl
 }
 
@@ -356,12 +387,12 @@ get picture url
 func (p *Plugin) getPicURL() string {
 	pics := make(map[string]string)
 	//  success picture url
-	pics["success"] = "https://tvax1.sinaimg.cn/large/ad5fbf65gy1gaus6md9k8j20rs0itq4u.jpg"
+	pics["success"] = "https://dci-file.bj.bcebos.com/fonchain-main/prod/image/0/comon/c663a410-521e-43b2-adbc-9fb00d5b0a91.png"
 	if p.Extra.Pic.SuccessPicURL != "" {
 		pics["success"] = p.Extra.Pic.SuccessPicURL
 	}
 	//  failure picture url
-	pics["failure"] = "https://tva1.sinaimg.cn/large/ad5fbf65gy1gaus6zpnocj20rs0itdgg.jpg"
+	pics["failure"] = "https://dci-file.bj.bcebos.com/fonchain-main/prod/image/0/comon/320f07c4-ea53-4980-b194-3e258e927549.png"
 	if p.Extra.Pic.FailurePicURL != "" {
 		pics["failure"] = p.Extra.Pic.FailurePicURL
 	}
