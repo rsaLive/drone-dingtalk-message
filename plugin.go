@@ -381,18 +381,19 @@ func (p *Plugin) baseTpl() string {
 	return tpl
 }
 
-/**
+/*
+*
 get picture url
 */
 func (p *Plugin) getPicURL() string {
 	pics := make(map[string]string)
 	//  success picture url
-	pics["success"] = "https://dci-file.bj.bcebos.com/fonchain-main/prod/image/0/comon/c663a410-521e-43b2-adbc-9fb00d5b0a91.png"
+	pics["success"] = "https://dci-file-new.bj.bcebos.com/fonchain-main/prod/image/0/comon/c663a410-521e-43b2-adbc-9fb00d5b0a91.png"
 	if p.Extra.Pic.SuccessPicURL != "" {
 		pics["success"] = p.Extra.Pic.SuccessPicURL
 	}
 	//  failure picture url
-	pics["failure"] = "https://dci-file.bj.bcebos.com/fonchain-main/prod/image/0/comon/320f07c4-ea53-4980-b194-3e258e927549.png"
+	pics["failure"] = "https://dci-file-new.bj.bcebos.com/fonchain-main/prod/image/0/comon/320f07c4-ea53-4980-b194-3e258e927549.png"
 	if p.Extra.Pic.FailurePicURL != "" {
 		pics["failure"] = p.Extra.Pic.FailurePicURL
 	}
@@ -405,7 +406,8 @@ func (p *Plugin) getPicURL() string {
 	return ""
 }
 
-/**
+/*
+*
 get color for message title
 */
 func (p *Plugin) getColor() string {
