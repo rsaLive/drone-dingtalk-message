@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM testhub.szjixun.cn:9043/public/golang:1.20-alpine as builder
 
 LABEL stage=gobuilder
 ENV TZ Asia/Shanghai
@@ -8,13 +8,13 @@ WORKDIR /build
 COPY ./build/drone-ding /app/drone-ding
 
 # run step
-FROM alpine
-
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-RUN apk update --no-cache
-RUN apk add --no-cache ca-certificates
-RUN apk add --no-cache tzdata
-
+#FROM alpine
+#
+#RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+#RUN apk update --no-cache
+#RUN apk add --no-cache ca-certificates
+#RUN apk add --no-cache tzdata
+FROM testhub.szjixun.cn:9043/public/self-alpine
 WORKDIR /app
 # copy bin from build step
 COPY --from=builder /app/drone-ding .
