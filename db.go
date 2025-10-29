@@ -3,6 +3,7 @@ package main
 import (
 	"drone-message/model"
 	"fmt"
+
 	"gorm.io/driver/mysql"
 	_ "gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -30,8 +31,10 @@ func DbLog(p *Plugin) (err error) {
 func GetDb(p *Plugin) (*gorm.DB, error) {
 	if db == nil {
 		var err error
+		//dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		//	p.Extra.Db.DbUsername, p.Extra.Db.DbPassword, p.Extra.Db.DbHost, p.Extra.Db.DbPort, p.Extra.Db.DbName)
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			p.Extra.Db.DbUsername, p.Extra.Db.DbPassword, p.Extra.Db.DbHost, p.Extra.Db.DbPort, p.Extra.Db.DbName)
+			"root", "IhQmhg8HZjDmU=Ove5PnA^D", "172.16.99.5", 3306, "notelog")
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err != nil {
 			return nil, err
